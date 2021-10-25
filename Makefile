@@ -1,3 +1,5 @@
+# From https://gist.github.com/groyoh/a3d8ec21d6c98ec0182ee704c75e6c99 *chef's kiss*
+
 .PHONY: test install
 
 CMOCKA_DIR=$(shell pwd)/cmocka-1.1.0
