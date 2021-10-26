@@ -1,4 +1,4 @@
-# From https://gist.github.com/groyoh/a3d8ec21d6c98ec0182ee704c75e6c99 *chef's kiss*
+# install rule from https://gist.github.com/groyoh/a3d8ec21d6c98ec0182ee704c75e6c99 *chef's kiss*
 SHELL=/bin/zsh
 
 .PHONY: test install clean
