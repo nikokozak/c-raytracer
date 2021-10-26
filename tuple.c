@@ -1,5 +1,5 @@
 #include "tuple.h"
-#include "equals.h"
+#include "utils.h"
 
 Tuple tuple_make_tuple(double x, double y, double z, double w)
 {
@@ -18,10 +18,18 @@ Tuple tuple_make_vector(double x, double y, double z)
 
 bool tuple_is_point(Tuple *tuple)
 {
-    return (equals_double(tuple->w, 1.0)) ? true : false;
+    return (utils_fequals(tuple->w, 1.0)) ? true : false;
 }
 
 bool tuple_is_vector(Tuple *tuple)
 {
-    return (equals_double(tuple->w, 0.0)) ? true : false;
+    return (utils_fequals(tuple->w, 0.0)) ? true : false;
+}
+
+Tuple tuple_add(Tuple *a, Tuple *b)
+{
+    return (Tuple) { a->x + b->x,
+        a->y + b->y,
+        a->z + b->z,
+        a->w + b->w };
 }

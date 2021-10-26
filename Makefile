@@ -7,14 +7,16 @@ CMOCKA_DIR=$(shell pwd)/cmocka-1.1.0
 CMOCKA_BUILD_DIR=$(CMOCKA_DIR)/build
 CMOCKA_OUT_DIR=$(CMOCKA_BUILD_DIR)/output
 TEST_DIR=$(shell pwd)/tests
+UTILS_DIR=$(shell pwd)/utils
 
 TEST_FILES := $(wildcard *_test.c)
+UTIL_FILES := $(wildcard $(UTILS_DIR)/*.c)
 
 all: test
 
 test: $(basename $(TEST_FILES))
 
-%_test: %_test.c %.c
+%_test: %_test.c %.c $(UTIL_FILES)
 
 	gcc $^ -L./lib -I./ -I./include -I./utils -lcmocka -o $(TEST_DIR)/$@
 

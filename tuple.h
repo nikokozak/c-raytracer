@@ -13,3 +13,5 @@ Tuple tuple_make_vector(double, double, double);
 
 bool tuple_is_point(Tuple*);
 bool tuple_is_vector(Tuple*);
+
+Tuple tuple_add(Tuple*, Tuple*);
