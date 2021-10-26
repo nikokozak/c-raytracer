@@ -16,7 +16,7 @@ test: $(basename $(TEST_FILES))
 
 %_test: %_test.c %.c
 
-	gcc $^ -L./lib -I./ -I./include -lcmocka -o $(TEST_DIR)/$@
+	gcc $^ -L./lib -I./ -I./include -I./utils -lcmocka -o $(TEST_DIR)/$@
 
 install:
 
