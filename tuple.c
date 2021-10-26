@@ -33,3 +33,57 @@ Tuple tuple_add(Tuple *a, Tuple *b)
         a->z + b->z,
         a->w + b->w };
 }
+
+Tuple tuple_sub(Tuple *a, Tuple *b)
+{
+    return (Tuple) { a->x - b->x,
+        a->y - b->y,
+        a->z - b->z,
+        a->w - b->w };
+}
+
+Tuple tuple_mult(Tuple *a, double s)
+{
+    return (Tuple) { a->x * s,
+        a->y * s,
+        a->z * s,
+        a->w * s };
+}
+
+Tuple tuple_negate(Tuple *a)
+{
+    return tuple_mult(a, -1.0);
+}
+
+Tuple tuple_div(Tuple *a, double s)
+{
+    return (Tuple) { a->x / s,
+        a->y / s,
+        a->z / s,
+        a->w / s };
+}
+
+double tuple_magnitude(Tuple *a)
+{
+    return sqrt(pow(a->x, 2) + pow(a->y, 2) + pow(a->z, 2) + pow(a->w, 2));
+}
+
+Tuple tuple_normalize(Tuple *a)
+{
+    return (Tuple) { a->x / tuple_magnitude(a),
+        a->y / tuple_magnitude(a),
+        a->z / tuple_magnitude(a),
+        a->w / tuple_magnitude(a) };
+}
+
+double tuple_dot(Tuple *a, Tuple *b)
+{
+    return a->x * b->x + a->y * b->y + a->z * b->z + a->w * b->w;
+}
+
+Tuple tuple_cross(Tuple *a, Tuple *b)
+{
+    return tuple_make_vector(a->y * b->z - a->z * b->y,
+            a->z * b->x - a->x * b->z,
+            a->x * b->y - a->y * b->x);
+}
