@@ -32,3 +32,8 @@ Color color_scale(Color a, double s)
         a.green * s,
         a.blue * s };
 }
+
+int color_to_255(double channel)
+{
+    return (int)(channel * 255.0);
+}

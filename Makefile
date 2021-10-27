@@ -11,14 +11,15 @@ UTILS_DIR=$(shell pwd)/utils
 
 TEST_FILES := $(wildcard *_test.c)
 UTIL_FILES := $(wildcard $(UTILS_DIR)/*.c)
+SOURCE_FILES := $(shell find . -maxdepth 1 -name "*.c" -not -name "*_test.c")
 
 all: test
 
 test: $(basename $(TEST_FILES))
 
-%_test: %_test.c %.c $(UTIL_FILES)
+%_test: %_test.c %.c $(UTIL_FILES) $(SOURCE_FILES)
 
-	gcc $^ -L./lib -I./ -I./include -I./utils -lcmocka -o $(TEST_DIR)/$@
+	gcc $^ -L./lib -I./ -I./include -I./utils -lcmocka -std=c99 -o $(TEST_DIR)/$@
 
 install:
 
