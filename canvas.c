@@ -26,7 +26,11 @@ Canvas *canvas_make(int width, int height)
 
 Canvas *canvas_write_pixel(Canvas *ca, int x, int y, Color co)
 {
-    ca->pixels[utils_rf_index(x, y, ca->width)] = co;
+    const int index = utils_rf_index(x, y, ca->width);
+
+    if (index < 0 || index >= c->width * c->height) { return ca; }
+
+    ca->pixels[index] = co;
     return ca;
 }
 
