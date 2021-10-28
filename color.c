@@ -35,5 +35,7 @@ Color color_scale(Color a, double s)
 
 int color_to_255(double channel)
 {
-    return (int)(channel * 255.0);
+    channel = 255.0 * channel;
+    const double t = channel < 0.0 ? 0.0 : channel;
+    return (int) t > 255.0 ? 255.0 : t;
 }

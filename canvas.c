@@ -3,6 +3,10 @@
 #include <string.h>
 #include "canvas.h"
 
+// Max possible length of the P3... header
+#define MAX_PPM_HEADER_LEN 21
+#define MAX_PPM_LINE_LEN 70
+
 Canvas *canvas_make(int width, int height)
 {
     int len = width * height;
@@ -47,7 +51,7 @@ char *_pixel_to_ppm(Color c)
 {
     char *ps = (char*)malloc(12 * sizeof(char));
 
-    sprintf(ps, "%d %d %d ",
+    sprintf(ps, "%d %d %d",
             color_to_255(c.red),
             color_to_255(c.green),
             color_to_255(c.blue));
@@ -57,27 +61,51 @@ char *_pixel_to_ppm(Color c)
 
 char *canvas_ppm_body(Canvas *c)
 {
-    char *ppm_body = (char*)malloc(sizeof(char));
+    char *ppm_body = (char*)malloc((MAX_PPM_LINE_LEN * c->height + c->height) * sizeof(char));
     ppm_body[0] = '\0';
 
-    for (int i = 0; i < c->height * c->width; i++)
-    {
-        strcat(ppm_body, _pixel_to_ppm(c->pixels[i]));
+    for (int y = 0; y < c->height; y++) {
+
+        // 70 char limit counter
+        int width_so_far = 0;
+
+        for (int x = 0; x < c->width; x++) {
+
+            const char *pixel_ppm = _pixel_to_ppm(canvas_pixel_at(c, x, y));
+            const int pixel_str_len = strlen(pixel_ppm);
+            width_so_far += pixel_str_len;
+
+            // Ensure line doesn't exceed 70 chars.
+            if (width_so_far > 70) {
+                strcat(ppm_body, "\n");
+                width_so_far = 0;
+            }
+
+            // ... + "255 0 0"
+            strcat(ppm_body, _pixel_to_ppm(canvas_pixel_at(c, x, y)));
+
+            if (x + 1 != c->width) {
+                strcat(ppm_body, " ");
+            }
+        }
+        strcat(ppm_body, "\n");
     }
     return ppm_body;
 }
 
 char *canvas_to_ppm(Canvas *c)
 {
+
+    const unsigned long result_size = (MAX_PPM_HEADER_LEN + MAX_PPM_LINE_LEN * c->height + c->height) * sizeof(char);
+    char *result = (char*)malloc(result_size);
+    result[0] = '\0';
+
     char *header = canvas_ppm_header(c);
-    const int pixels_len = c->width * c->height;
-    const int pixel_ind_size = 12;
-    const int header_size = strlen(header);
-    
     char *body = canvas_ppm_body(c);
     
-    strcat(header, body);
-    return header;
+    strcat(result, header);
+    strcat(result, body);
+    return result;
 }
 
 void canvas_kill(Canvas *c)
