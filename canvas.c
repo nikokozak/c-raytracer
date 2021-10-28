@@ -28,7 +28,7 @@ Canvas *canvas_write_pixel(Canvas *ca, int x, int y, Color co)
 {
     const int index = utils_rf_index(x, y, ca->width);
 
-    if (index < 0 || index >= c->width * c->height) { return ca; }
+    if (index < 0 || index >= ca->width * ca->height) { return ca; }
 
     ca->pixels[index] = co;
     return ca;
@@ -48,7 +48,7 @@ char *canvas_ppm_header(Canvas *c)
 
 char *canvas_ppm_body(Canvas *c)
 {
-    const long unsigned ppm_size = MAX_PPM_LINE_LEN * c->height + c->height;
+    const long unsigned ppm_size = c->height * c->width * 10;
     char *ppm_body = (char*)malloc(ppm_size * sizeof(char));
     ppm_body[0] = '\0';
 
@@ -79,7 +79,7 @@ void shorten_ppm_row(char *row, int max_length)
 
 char *canvas_ppm_row(Canvas *c, int row)
 {
-    char *ppm_row = (char*)malloc(c->width * 4 * sizeof(char));
+    char *ppm_row = (char*)malloc(c->width * 12 * sizeof(char));
     int length_so_far = 0;
     int max_length = 70;
 
@@ -113,7 +113,7 @@ char *canvas_to_ppm(Canvas *c)
 
     char *header = canvas_ppm_header(c);
     char *body = canvas_ppm_body(c);
-  
+
     strcat(result, header);
     strcat(result, body);
     return result;

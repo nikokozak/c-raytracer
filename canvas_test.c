@@ -96,6 +96,12 @@ static void splits_ppm_long_lines(void **state)
     assert_string_equal(expected_result, ppm);
 }
 
+static void does_not_segfault_on_large_canvas(void **state)
+{
+    Canvas *c = canvas_make(500, 500);
+    canvas_to_ppm(c);
+}
+
 int main(void)
 {
     const struct CMUnitTest tests[] = {
@@ -104,7 +110,8 @@ int main(void)
         cmocka_unit_test(creates_correct_ppm_header),
         cmocka_unit_test(creates_correct_ppm_body),
         cmocka_unit_test(creates_correct_ppm),
-        cmocka_unit_test(splits_ppm_long_lines)
+        cmocka_unit_test(splits_ppm_long_lines),
+        cmocka_unit_test(does_not_segfault_on_large_canvas)
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
