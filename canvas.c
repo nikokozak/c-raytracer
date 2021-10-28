@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "canvas.h"
+#include "utils.h"
 
 // Max possible length of the P3... header
 #define MAX_PPM_HEADER_LEN 21
@@ -25,19 +26,13 @@ Canvas *canvas_make(int width, int height)
 
 Canvas *canvas_write_pixel(Canvas *ca, int row, int col, Color co)
 {
-    int index = canvas_pixel_index_at(ca, row, col);
-    ca->pixels[index] = co;
+    ca->pixels[utils_rf_index(row, col, ca->width)] = co;
     return ca;
-}
-
-int canvas_pixel_index_at(Canvas *c, int row, int col)
-{
-    return col + (c->width * row);
 }
 
 Color canvas_pixel_at(Canvas *c, int row, int col)
 {
-    return c->pixels[canvas_pixel_index_at(c, row, col)];
+    return c->pixels[utils_rf_index(row, col, c->width)];
 }
 
 char *canvas_ppm_header(Canvas *c)
@@ -47,50 +42,45 @@ char *canvas_ppm_header(Canvas *c)
     return header; 
 }
 
-char *_pixel_to_ppm(Color c)
-{
-    char *ps = (char*)malloc(12 * sizeof(char));
-
-    sprintf(ps, "%d %d %d",
-            color_to_255(c.red),
-            color_to_255(c.green),
-            color_to_255(c.blue));
-
-    return ps;
-}
-
 char *canvas_ppm_body(Canvas *c)
 {
-    char *ppm_body = (char*)malloc((MAX_PPM_LINE_LEN * c->height + c->height) * sizeof(char));
+    const long unsigned ppm_size = MAX_PPM_LINE_LEN * c->height + c->height;
+    char *ppm_body = (char*)malloc(ppm_size * sizeof(char));
     ppm_body[0] = '\0';
 
-    for (int y = 0; y < c->height; y++) {
+    for (int row = 0; row < c->height; row++) {
 
         // 70 char limit counter
         int width_so_far = 0;
 
-        for (int x = 0; x < c->width; x++) {
+        for (int col = 0; col < c->width; col++) {
 
-            const char *pixel_ppm = _pixel_to_ppm(canvas_pixel_at(c, x, y));
-            const int pixel_str_len = strlen(pixel_ppm);
-            width_so_far += pixel_str_len;
+            const Color pixel = canvas_pixel_at(c, row, col);
+            const double colors[] = { pixel.red, pixel.green, pixel.blue };
 
-            // Ensure line doesn't exceed 70 chars.
-            if (width_so_far > 70) {
-                strcat(ppm_body, "\n");
-                width_so_far = 0;
+            for (int i = 0; i < 3; i++) 
+            {
+                char *channel_s = color_channel_to_s(colors[i]);
+                strcat(ppm_body, channel_s);
+                
+                // Ensure line doesn't exceed 70 chars.
+                if (width_so_far + 4 > 70) {
+                    strcat(ppm_body, "\n");
+                    width_so_far = 0;
+                } else {
+                    strcat(ppm_body, " ");
+                    width_so_far += strlen(channel_s);
+                }
             }
 
-            // ... + "255 0 0"
-            strcat(ppm_body, _pixel_to_ppm(canvas_pixel_at(c, x, y)));
-
-            if (x + 1 != c->width) {
-                strcat(ppm_body, " ");
-            }
         }
+
         strcat(ppm_body, "\n");
+
     }
+
     return ppm_body;
+
 }
 
 char *canvas_to_ppm(Canvas *c)

@@ -6,3 +6,14 @@ bool utils_fequals(double a, double b)
 {
     return (fabs(a - b) < EPSILON) ? true : false;
 }
+
+double utils_clamp(double in, double min, double max)
+{
+    const double t = in < min ? min : in;
+    return (int) t > max ? max : t;
+}
+
+int utils_rf_index(int row, int column, int width)
+{
+    return column + (row * width);
+}

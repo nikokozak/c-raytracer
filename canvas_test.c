@@ -28,7 +28,7 @@ static void writes_pixels(void **state)
 
     canvas_write_pixel(c, 2, 3, r);
 
-    Color pixel = c->pixels[canvas_pixel_index_at(c, 2, 3)];
+    Color pixel = canvas_pixel_at(c, 2, 3);
 
     assert_int_equal(pixel.red, 1.0);
     assert_int_equal(pixel.green, 0.0);
@@ -88,7 +88,7 @@ static void splits_ppm_long_lines(void **state)
 
     char *expected_result = 
         "P3\n10 2\n255\n"
-        "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153
+        "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153"
 
         "0 0 0 0 0 0 0 127 0 0 0 0 0 0 0\n"
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255\n";

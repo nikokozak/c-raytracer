@@ -1,4 +1,7 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include "color.h"
+#include "utils.h"
 
 Color color_make(double red, double blue, double green)
 {
@@ -33,9 +36,25 @@ Color color_scale(Color a, double s)
         a.blue * s };
 }
 
-int color_to_255(double channel)
+int color_channel_to_255(double channel)
 {
     channel = 255.0 * channel;
-    const double t = channel < 0.0 ? 0.0 : channel;
-    return (int) t > 255.0 ? 255.0 : t;
+    return utils_clamp(channel, 0.0, 250.0);
+}
+
+char *color_channel_to_s(double channel) // Takes 0.0-1.0 scale channel
+{
+    char *b = (char*)malloc(3 * sizeof(char));
+    sprintf(b, "%d", color_channel_to_255(channel));
+    return b;
+}
+
+char *color_to_s(Color c)
+{
+    char *b = (char*)malloc(11 * sizeof(char));
+    sprintf(b, "%d %d %d",
+            color_channel_to_255(c.red),
+            color_channel_to_255(c.green),
+            color_channel_to_255(c.blue));
+    return b;
 }

@@ -13,6 +13,9 @@ Color color_sub(Color, Color);
 Color color_mult(Color, Color);
 Color color_scale(Color, double);
 
-int color_to_255(double);
+int color_channel_to_255(double);
+char *color_channel_to_s(double);
+char *color_to_s(Color c);
+
 
 #endif
