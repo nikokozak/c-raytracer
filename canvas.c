@@ -24,15 +24,15 @@ Canvas *canvas_make(int width, int height)
     return c;
 }
 
-Canvas *canvas_write_pixel(Canvas *ca, int row, int col, Color co)
+Canvas *canvas_write_pixel(Canvas *ca, int x, int y, Color co)
 {
-    ca->pixels[utils_rf_index(row, col, ca->width)] = co;
+    ca->pixels[utils_rf_index(x, y, ca->width)] = co;
     return ca;
 }
 
-Color canvas_pixel_at(Canvas *c, int row, int col)
+Color canvas_pixel_at(Canvas *c, int x, int y)
 {
-    return c->pixels[utils_rf_index(row, col, c->width)];
+    return c->pixels[utils_rf_index(x, y, c->width)];
 }
 
 char *canvas_ppm_header(Canvas *c)
@@ -48,51 +48,68 @@ char *canvas_ppm_body(Canvas *c)
     char *ppm_body = (char*)malloc(ppm_size * sizeof(char));
     ppm_body[0] = '\0';
 
-    for (int row = 0; row < c->height; row++) {
-
-        // 70 char limit counter
-        int width_so_far = 0;
-
-        for (int col = 0; col < c->width; col++) {
-
-            const Color pixel = canvas_pixel_at(c, row, col);
-            const double colors[] = { pixel.red, pixel.green, pixel.blue };
-
-            for (int i = 0; i < 3; i++) 
-            {
-                char *channel_s = color_channel_to_s(colors[i]);
-                strcat(ppm_body, channel_s);
-                
-                // Ensure line doesn't exceed 70 chars.
-                if (width_so_far + 4 > 70) {
-                    strcat(ppm_body, "\n");
-                    width_so_far = 0;
-                } else {
-                    strcat(ppm_body, " ");
-                    width_so_far += strlen(channel_s);
-                }
-            }
-
-        }
-
-        strcat(ppm_body, "\n");
-
+    for (int row = 0; row < c->height; row++)
+    {
+        strcat(ppm_body, canvas_ppm_row(c, row));
     }
 
     return ppm_body;
+}
 
+void shorten_ppm_row(char *row, int max_length)
+{
+    if (strlen(row) < 70) { return; }
+    int replacement_index = max_length;
+
+    while (replacement_index < strlen(row)) {
+        char at_index = row[replacement_index];
+
+        while (at_index != ' ') {
+            at_index = row[--replacement_index];
+        }
+
+        row[replacement_index++] = '\n';
+        replacement_index += max_length;
+    }
+}
+
+char *canvas_ppm_row(Canvas *c, int row)
+{
+    char *ppm_row = (char*)malloc(c->width * 4 * sizeof(char));
+    int length_so_far = 0;
+    int max_length = 70;
+
+    for (int x = 0; x < c->width; x++)
+    {
+        Color pixel = canvas_pixel_at(c, x, row);
+
+        strcat(ppm_row, color_channel_to_s(pixel.red));
+        strcat(ppm_row, " ");
+        strcat(ppm_row, color_channel_to_s(pixel.green));
+        strcat(ppm_row, " ");
+        strcat(ppm_row, color_channel_to_s(pixel.blue));
+
+        if (x + 1 == c->width) {
+            strcat(ppm_row, "\n");
+        } else {
+            strcat(ppm_row, " ");
+        }
+    }
+
+    shorten_ppm_row(ppm_row, max_length);
+    return ppm_row;
 }
 
 char *canvas_to_ppm(Canvas *c)
 {
 
-    const unsigned long result_size = (MAX_PPM_HEADER_LEN + MAX_PPM_LINE_LEN * c->height + c->height) * sizeof(char);
+    const unsigned long result_size = (MAX_PPM_HEADER_LEN + (c->width * c->height * 12)) * sizeof(char);
     char *result = (char*)malloc(result_size);
     result[0] = '\0';
 
     char *header = canvas_ppm_header(c);
     char *body = canvas_ppm_body(c);
-    
+  
     strcat(result, header);
     strcat(result, body);
     return result;

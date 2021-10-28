@@ -13,7 +13,7 @@ double utils_clamp(double in, double min, double max)
     return (int) t > max ? max : t;
 }
 
-int utils_rf_index(int row, int column, int width)
+int utils_rf_index(int x, int y, int width)
 {
-    return column + (row * width);
+    return x + (y * width);
 }

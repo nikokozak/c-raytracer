@@ -39,7 +39,7 @@ Color color_scale(Color a, double s)
 int color_channel_to_255(double channel)
 {
     channel = 255.0 * channel;
-    return utils_clamp(channel, 0.0, 250.0);
+    return utils_clamp(channel, 0.0, 255.0);
 }
 
 char *color_channel_to_s(double channel) // Takes 0.0-1.0 scale channel

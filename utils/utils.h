@@ -6,6 +6,6 @@
 
 bool utils_fequals(double a, double b);
 double utils_clamp(double in, double min, double max);
-int utils_rf_index(int row, int column, int width);
+int utils_rf_index(int x, int y, int width);
 
 #endif
