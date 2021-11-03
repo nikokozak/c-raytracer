@@ -1,3 +1,5 @@
+#ifndef RAYTRACE_TUPLE
+#define RAYTRACE_TUPLE
 #include <stdbool.h>
 
 typedef struct Tuple {
@@ -7,6 +9,7 @@ typedef struct Tuple {
     double w;
 } Tuple;
 
+bool tuple_equal(Tuple a, Tuple b);
 Tuple tuple_make_tuple(double, double, double, double);
 Tuple tuple_make_point(double, double, double);
 Tuple tuple_make_vector(double, double, double);
@@ -23,3 +26,4 @@ Tuple tuple_mult(Tuple, double);
 Tuple tuple_div(Tuple, double);
 Tuple tuple_normalize(Tuple);
 Tuple tuple_cross(Tuple, Tuple);
+#endif

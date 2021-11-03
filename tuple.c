@@ -4,6 +4,14 @@
 #define TUPLE_POINT_WEIGHT 1.0
 #define TUPLE_VECTOR_WEIGHT 0.0
 
+bool tuple_equal(Tuple a, Tuple b)
+{
+    return utils_fequals(a.x, b.x) && 
+        utils_fequals(a.y, b.y) && 
+        utils_fequals(a.z, b.z) &&
+        utils_fequals(a.w, b.w);
+}
+
 Tuple tuple_make_tuple(double x, double y, double z, double w)
 {
     return (Tuple) { x, y, z, w };
