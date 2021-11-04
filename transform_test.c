@@ -10,7 +10,7 @@
 
 static void translation_does_not_affect_vectors(void **state)
 {
-    Matrix4 transform = transform_translation(5.0, -3.0, 2.0);
+    Matrix4 transform = transform_translate(5.0, -3.0, 2.0);
     Tuple vector = tuple_make_vector(-3.0, 4.0, 5.0);
 
     Tuple result = matrix4_mult_tuple(transform, vector);
@@ -20,7 +20,7 @@ static void translation_does_not_affect_vectors(void **state)
 
 static void multiplying_by_a_translation_matrix(void **state)
 {
-    Matrix4 transform = transform_translation(5.0, -3.0, 2.0);
+    Matrix4 transform = transform_translate(5.0, -3.0, 2.0);
     Tuple point = tuple_make_point(-3.0, 4.0, 5.0);
 
     Tuple result = matrix4_mult_tuple(transform, point);
@@ -31,7 +31,7 @@ static void multiplying_by_a_translation_matrix(void **state)
 
 static void multiplying_by_inverse_translation_matrix(void **state)
 {
-    Matrix4 transform = transform_translation(5.0, -3.0, 2.0);
+    Matrix4 transform = transform_translate(5.0, -3.0, 2.0);
     Matrix4 inv = matrix4_inverse(transform);
     Tuple point = tuple_make_point(-3.0, 4.0, 5.0);
 
@@ -188,6 +188,42 @@ static void shearing(void **state)
     assert_true(tuple_equal(exp_pzy, res_pzy));
 }
 
+static void individual_transforms_are_applied_in_seq(void **state)
+{
+    Tuple p = tuple_make_point(1.0, 0.0, 1.0);
+    Matrix4 a = transform_rotate_x(M_PI / 2);
+    Matrix4 b = transform_scale(5.0, 5.0, 5.0);
+    Matrix4 c = transform_translate(10.0, 5.0, 7.0);
+
+    Tuple p2 = matrix4_mult_tuple(a, p);
+    Tuple expected_p2 = tuple_make_point(1.0, -1.0, 0.0);
+
+    assert_true(tuple_equal(p2, expected_p2));
+
+    Tuple p3 = matrix4_mult_tuple(b, p2);
+    Tuple expected_p3 = tuple_make_point(5.0, -5.0, 0.0);
+
+    assert_true(tuple_equal(p3, expected_p3));
+
+    Tuple p4 = matrix4_mult_tuple(c, p3);
+    Tuple expected_p4 = tuple_make_point(15.0, 0.0, 7.0);
+
+    assert_true(tuple_equal(p4, expected_p4));
+}
+
+static void chained_transforms_are_applied_in_reverse(void **state)
+{
+    Tuple p = tuple_make_point(1.0, 0.0, 1.0);
+    Matrix4 a = transform_rotate_x(M_PI / 2.0);
+    Matrix4 b = transform_scale(5.0, 5.0, 5.0);
+    Matrix4 c = transform_translate(10.0, 5.0, 7.0);
+    Matrix4 t = matrix4_mult(matrix4_mult(c, b), a);
+    Tuple result = matrix4_mult_tuple(t, p);
+    Tuple expected = tuple_make_point(15.0, 0.0, 7.0);
+
+    assert_true(tuple_equal(result, expected));
+}
+
 int main(void)
 {
     const struct CMUnitTest tests[] = {
@@ -203,6 +239,8 @@ int main(void)
         cmocka_unit_test(rotating_around_y_axis),
         cmocka_unit_test(rotating_around_z_axis),
         cmocka_unit_test(shearing),
+        cmocka_unit_test(individual_transforms_are_applied_in_seq),
+        cmocka_unit_test(chained_transforms_are_applied_in_reverse),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);

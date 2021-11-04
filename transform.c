@@ -1,6 +1,6 @@
 #include "transform.h"
 
-Matrix4 transform_translation(double x, double y, double z)
+Matrix4 transform_translate(double x, double y, double z)
 {
     Matrix4 result = matrix4_identity();
     result.m[0][3] = x;
