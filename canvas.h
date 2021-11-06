@@ -1,3 +1,5 @@
+#ifndef RAYTRACE_CANVAS
+#define RAYTRACE_CANVAS
 #include "color.h"
 
 typedef struct Canvas {
@@ -16,3 +18,4 @@ char *canvas_ppm_header(Canvas*);
 char *canvas_ppm_body(Canvas*);
 char *canvas_ppm_row(Canvas*, int);
 char *canvas_to_ppm(Canvas*);
+#endif

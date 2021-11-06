@@ -1,3 +1,5 @@
+#ifndef RAYTRACE_MATRIX
+#define RAYTRACE_MATRIX
 #define MAT4_SIZE 4
 #define MAT3_SIZE 3
 #define MAT2_SIZE 2
@@ -37,3 +39,4 @@ double matrix4_determinant(Matrix4);
 
 bool matrix4_invertible(Matrix4);
 Matrix4 matrix4_inverse(Matrix4);
+#endif

@@ -16,6 +16,4 @@ Color color_scale(Color, double);
 int color_channel_to_255(double);
 char *color_channel_to_s(double);
 char *color_to_s(Color c);
-
-
 #endif
