@@ -85,15 +85,12 @@ static void originates_in_a_sphere(void **state)
 
 static void sphere_is_behind_a_ray(void **state)
 {
-    Tuple origin = tuple_make_point(0.0, 0.0, 0.5);
+    Tuple origin = tuple_make_point(0.0, 0.0, 5.0);
     Tuple direction = tuple_make_vector(0.0, 0.0, 1.0);
     Ray r = ray_make(origin, direction);
     Sphere s = sphere_make();
 
     Intersect xs = ray_intersect(s, r);
-
-    printf("%f\n", xs.t[0]);
-    printf("%f\n", xs.t[1]);
 
     assert_int_equal(xs.count, 2);
     assert_true(utils_fequals(xs.t[0], -6.0));
