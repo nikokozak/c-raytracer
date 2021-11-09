@@ -3,5 +3,12 @@
 
 Sphere sphere_make()
 {
-    return (Sphere) { rand() };
+    return (Sphere) { rand(),
+    matrix4_identity() };
+}
+
+Sphere *sphere_set_transform(Sphere *s, Matrix4 t)
+{
+    s->transform = t;
+    return s;
 }

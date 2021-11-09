@@ -5,36 +5,32 @@
 #include <math.h>
 #include <stdio.h>
 #include "ray.h"
+#include "transform.h"
 #include "sphere.h"
 #include "utils.h"
 
-static void creates_a_ray(void **state)
+static void sphere_default_transformation(void **state)
 {
-    Tuple origin = tuple_make_point(1.0, 2.0, 3.0);
-    Tuple direction = tuple_make_vector(4.0, 5.0, 6.0);
-    Ray a = ray_make(origin, direction);
+    Sphere s = sphere_make();
 
-    assert_true(tuple_equal(a.origin, origin));
-    assert_true(tuple_equal(a.direction, direction));
+    assert_true(matrix4_equal(s.transform, matrix4_identity()));
 }
 
-static void computes_a_point_from_distance(void **state)
+static void set_sphere_transformation(void **state)
 {
-    Tuple origin = tuple_make_point(2.0, 3.0, 4.0);
-    Tuple direction = tuple_make_vector(1.0, 0.0, 0.0);
-    Ray a = ray_make(origin, direction);
+    Sphere s = sphere_make();
+    Matrix4 t = transform_translate(2.0, 3.0, 4.0);
 
-    assert_true(tuple_equal(ray_position(a, 0.0), tuple_make_point(2.0, 3.0, 4.0)));
-    assert_true(tuple_equal(ray_position(a, 1.0), tuple_make_point(3.0, 3.0, 4.0)));
-    assert_true(tuple_equal(ray_position(a, -1.0), tuple_make_point(1.0, 3.0, 4.0)));
-    assert_true(tuple_equal(ray_position(a, 2.5), tuple_make_point(4.5, 3.0, 4.0)));
+    sphere_set_transform(&s, t);
+
+    assert_true(matrix4_equal(s.transform, t));
 }
 
 int main(void)
 {
     const struct CMUnitTest tests[] = {
-        cmocka_unit_test(creates_a_ray),
-        cmocka_unit_test(computes_a_point_from_distance),
+        cmocka_unit_test(sphere_default_transformation),
+        cmocka_unit_test(set_sphere_transformation),
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
